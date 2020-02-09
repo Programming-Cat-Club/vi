@@ -1,0 +1,15 @@
+        // 板块子分类
+        $forum_class = $this->CacheObj->get("app_forum_class_{$fid}_{$pageid}");
+        if(empty($forum_class) || DEBUG){
+            // 论坛详情
+            $Forum = S('forum');
+            $forum_class = $Forum->select(['name','id'],[
+                'fid'=>$fid,
+            ]);
+            array_unshift($forum_class,[
+                'name' => '全部',
+                'id'   => $fid
+            ]); 
+            $this->CacheObj->set("app_forum_class_{$fid}_{$pageid}",$forum_class);
+        }
+        $this->v('forum_class',$forum_class);

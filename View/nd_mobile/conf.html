@@ -1,0 +1,278 @@
+<ul class="nav nav-tabs tab-style2">
+    <li class="active">
+        <a href="#jiben" data-toggle="tab">
+            <span class="text-wrapper">基本设置</span>
+        </a>
+    </li>
+    <li class="">
+        <a href="#guanggao" data-toggle="tab">
+            <span class="text-wrapper">广告设置</span>
+        </a>
+    </li>
+</ul>
+
+<div class="smart-widget-body">
+    <div class="tab-content">
+        <div class="tab-pane fade active in" id="jiben">
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页顶部幻灯图片设置</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" name="huandeng" style="height:200px">{php echo view_form('nd_mobile','huandeng')}</textarea>
+                    <span class="help-block">使用样例: 输入 http://www.daniuwo.com,名称,图片地址，用过使用“,”符号隔开</span>
+                    <span class="help-block">值为: 链接,名称,图片地址</span>
+                    <span class="help-block">http://www.daniuwo.com,名称,图片地址</span>
+                    <span class="help-block">上面这条意思: 自定义链接名称, 跳http://www.daniuwo.com</span>
+                    <span class="help-block">多个链接换行输入即可</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">自定义板块(html)</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" name="zidingyi_html" style="height:200px">{php echo view_form('nd_mobile','zidingyi_html')}</textarea>
+                    <span class="help-block">现在是首页的自定义推荐html</span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="zidingyi_html_no" value="{php echo view_form('nd_mobile','zidingyi_html_no')}">
+                    <span class="help-block">1开0关</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页板块自定义</label>
+                <div class="col-lg-10">
+                    <input type="text" name="bankuai" class="form-control" value="{php echo view_form('nd_mobile','bankuai')}">
+                    <span class="help-block">输入板块id，多个id用英文逗号分割</span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="bankuai_no" value="{php echo view_form('nd_mobile','bankuai_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                    <label for="input1" class="col-lg-2 control-label">板块样式方案</label>
+                    <div class="col-lg-10">
+                        ‍‍<select id="pid" class="form-control" name="forun_index_style">
+                            <option value="1" {if view_form('nd_mobile','forun_index_style') == 1} selected = "selected"{/if}>方案一</a>
+                            <option value="2" {if view_form('nd_mobile','forun_index_style') == 2} selected = "selected"{/if}>方案二</a>
+                            <option value="3" {if view_form('nd_mobile','forun_index_style') == 3} selected = "selected"{/if}>方案三</a>
+                        </select>
+                        <span class="help-block">修改板块列表主题方案,(方案一宫格样式,方案二列表样式,方案三滚动列表样式)</span>
+                
+                    </div>
+                </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页推荐阅读显示条数</label>
+                <div class="col-lg-10">
+                    <input type="text" name="tuijian" class="form-control" value="{php echo view_form('nd_mobile','tuijian')}">
+                    <span class="help-block"></span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="tuijian_no" value="{php echo view_form('nd_mobile','tuijian_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">帖子页推荐阅读显示条数</label>
+                <div class="col-lg-10">
+                    <input type="text" name="tuijian_thread" class="form-control" value="{php echo view_form('nd_mobile','tuijian_thread')}">
+                    <span class="help-block"></span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="tuijian_thread_no" value="{php echo view_form('nd_mobile','tuijian_thread_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页社区新帖显示条数</label>
+                <div class="col-lg-10">
+                    <input type="text" name="xintie" class="form-control" value="{php echo view_form('nd_mobile','xintie')}">
+                    <span class="help-block"></span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="xintie_no" value="{php echo view_form('nd_mobile','xintie_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页精彩图片显示条数</label>
+                <div class="col-lg-10">
+                    <input type="text" name="tupian" class="form-control" value="{php echo view_form('nd_mobile','tupian')}">
+                    <span class="help-block"></span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="tupian_no" value="{php echo view_form('nd_mobile','tupian_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页推荐关注显示条数</label>
+                <div class="col-lg-10">
+                    <input type="text" name="guanzhu" class="form-control" value="{php echo view_form('nd_mobile','guanzhu')}">
+                    <span class="help-block"></span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="guanzhu_no" value="{php echo view_form('nd_mobile','guanzhu_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页精华文章显示条数</label>
+                <div class="col-lg-10">
+                    <input type="text" name="jinghua" class="form-control" value="{php echo view_form('nd_mobile','jinghua')}">
+                    <span class="help-block"></span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="jinghua_no" value="{php echo view_form('nd_mobile','jinghua_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页自定义调用板块帖子</label>
+                <div class="col-lg-10">
+                    <input type="text" name="fid" class="form-control" value="{php echo view_form('nd_mobile','fid')}">
+                    <span class="help-block">板块id</span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label"></label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="title" value="{php echo view_form('nd_mobile','title')}">
+                    <span class="help-block">自定义标题</span>
+
+                </div>
+                <label for="input1" class="col-lg-2 control-label"></label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="tiaoshu" value="{php echo view_form('nd_mobile','tiaoshu')}">
+                    <span class="help-block">显示主题条数</span>
+
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="zidingyibankuai_no" value="{php echo view_form('nd_mobile','zidingyibankuai_no')}">
+                    <span class="help-block">1开0关</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页活动Banner</label>
+                <div class="col-lg-10">
+                    <input type="text" name="huodong_name" class="form-control" value="{php echo view_form('nd_mobile','huodong_name')}">
+                    <span class="help-block">标题</span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label"></label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" name="huodong_banner">{php echo view_form('nd_mobile','huodong_banner')}</textarea>
+                    <span class="help-block">自定义标题</span>
+                </div>
+                <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                <div class="col-lg-10">
+                    <input class="form-control" name="huodong_banner_no" value="{php echo view_form('nd_mobile','huodong_banner_no')}">
+                    <span class="help-block">1开0关</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">论坛列表样式</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" name="style" style="height:200px">{php echo view_form('nd_mobile','style')}</textarea>
+                    <span class="help-block">样式id分别为一下几种 经典样式=1 朋友圈=2 瀑布流=3</span>
+                    <span class="help-block">例子:10,3</span>
+                    <span class="help-block">解释:10是板块id 3是样式id,多条请换行</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                    <label for="input1" class="col-lg-2 control-label">开启首页友链显示</label>
+                    <div class="col-lg-10">
+                        <input class="form-control" name="links_no" value="{php echo view_form('nd_mobile','links_no')}">
+                        <span class="help-block">1开0关</span>
+    
+                    </div>
+                </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">友链配置</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" name="links" style="height:200px">{php echo view_form('nd_mobile','links')}</textarea>
+                    <br>
+                    <input class="form-control" name="links_shenqing" value="{php echo view_form('nd_mobile','links_shenqing')}" value="{php echo view_form('nd_mobile','links_shenqing')}" placeholder="申请链接，带http://的url地址">
+                    <span class="help-block">使用样例: 输入 http://www.daniuwo.com,名称，用过使用“,”符号隔开</span>
+                    <span class="help-block">值为: 链接,名称</span>
+                    <span class="help-block">http://www.daniuwo.com,名称</span>
+                    <span class="help-block">上面这条意思: 自定义链接名称, 跳http://www.daniuwo.com</span>
+                    <span class="help-block">多个链接换行输入即可</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input1" class="col-lg-2 control-label">首页页脚</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" name="index_footer" style="height:200px">{php echo view_form('nd_mobile','index_footer')}</textarea>
+                    <span class="help-block">首页页脚</span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade " id="guanggao">
+                <div class="form-group">
+                    <label for="input1" class="col-lg-2 control-label">首页广告1</label>
+                    <div class="col-lg-10">
+                        <textarea class="form-control" name="guanggao_index_1" style="">{php echo view_form('nd_mobile','guanggao_index_1')}</textarea>
+                        <span class="help-block">使用样例: 输入 http://www.daniuwo.com,名称,图片地址，用过使用“,”符号隔开</span>
+                    </div>
+                    <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                    <div class="col-lg-10">
+                        <input class="form-control" name="guanggao_inedx_1_no" value="{php echo view_form('nd_mobile','guanggao_inedx_1_no')}">
+                        <span class="help-block">1开0关</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input1" class="col-lg-2 control-label">首页广告2</label>
+                    <div class="col-lg-10">
+                        <textarea class="form-control" name="guanggao_index_2" style="">{php echo view_form('nd_mobile','guanggao_index_2')}</textarea>
+                        <span class="help-block">使用样例: 输入 http://www.daniuwo.com,名称,图片地址，用过使用“,”符号隔开</span>
+                    </div>
+                    <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                    <div class="col-lg-10">
+                        <input class="form-control" name="guanggao_inedx_2_no" value="{php echo view_form('nd_mobile','guanggao_inedx_2_no')}">
+                        <span class="help-block">1开0关</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input1" class="col-lg-2 control-label">论坛列表</label>
+                    <div class="col-lg-10">
+                        <textarea class="form-control" name="guanggao_forum" style="">{php echo view_form('nd_mobile','guanggao_forum')}</textarea>
+                        <span class="help-block">使用样例: 输入 http://www.daniuwo.com,名称,图片地址，用过使用“,”符号隔开</span>
+                    </div>
+                    <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                    <div class="col-lg-10">
+                        <input class="form-control" name="guanggao_forum_no" value="{php echo view_form('nd_mobile','guanggao_forum_no')}">
+                        <span class="help-block">1开0关</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input1" class="col-lg-2 control-label">帖子页面</label>
+                    <div class="col-lg-10">
+                        <textarea class="form-control" name="guanggao_thread" style="">{php echo view_form('nd_mobile','guanggao_thread')}</textarea>
+                        <span class="help-block">使用样例: 输入 http://www.daniuwo.com,名称,图片地址，用过使用“,”符号隔开</span>
+                    </div>
+                    <label for="input1" class="col-lg-2 control-label">是否开启显示</label>
+                    <div class="col-lg-10">
+                        <input class="form-control" name="guanggao_thread_no" value="{php echo view_form('nd_mobile','guanggao_thread_no')}">
+                        <span class="help-block">1开0关</span>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
