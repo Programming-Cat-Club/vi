@@ -1,0 +1,66 @@
+{include common/head} {include common/header}
+<div class="layui-container" style="margin-top:20px;">
+    <div class="layui-row layui-col-space15">
+        <div class="fly-panel">
+                <div class="fly-panel-title fly-filter" style="    font-weight: bold;
+                font-size: 18px;
+                color: #444;">
+                        待审核的帖子
+                    </div>
+            <ul class="fly-list" id="thread_list">
+                {foreach $data as $v}
+                <li>
+                        <a href="{#HYBBS_URL('my',$v['user'])}" class="fly-avatar">
+                            <img src="{#WWW}{$v.avatar.b}" alt="{$v.user}">
+                        </a>
+                        <h2>
+                            <a href="{#HYBBS_URL('forum',$v['fid'])}" class="layui-badge">{$forum[$v['fid']]['name']}</a>
+                            <a href="{#HYBBS_URL('thread',$v['tid'])}">{$v.title}</a>
+                        </h2>
+                        <div class="fly-list-info">
+                            <a href="{#HYBBS_URL('my',$v['user'])}" link>
+                                <cite>{$v.user}</cite>
+                            {php $ugid = M('User')->get_gid($v['uid'])}
+                            {if $ugid == c('ADMIN_GROUP')}
+                                <i class="iconfont icon-renzheng" title="系统管理员"></i>
+                            {/if}
+                            <i class="layui-badge fly-badge-vip">{php echo M("Usergroup")->gid_to_name($ugid)}</i>
+                           
+                            </a>
+                            <span>{php echo humandate($v['atime']);}</span>
+                    
+                            <!-- <span class="fly-list-kiss layui-hide-xs" title="悬赏飞吻">
+                                <i class="iconfont icon-kiss"></i> 60</span> -->
+                            <!-- <span class="layui-badge fly-badge-accept layui-hide-xs">已结</span> -->
+                            <span class="fly-list-nums">
+                                <i class="iconfont icon-pinglun1" title="回答"></i> {$v.posts}
+                            </span>
+                        </div>
+                        <div class="fly-list-badge">
+                            {if isset($top_list)}
+                                {if !empty($top_list) && $v['top']==2}
+                                <span class="layui-badge layui-bg-cyan">全站置顶</span>
+                                {/if}
+                            {/if}
+                            {if isset($top_f_data)}
+                                {if !empty($top_f_data) && $v['top']==1}
+                                <span class="layui-badge layui-bg-cyan">置顶</span>
+                                {/if}
+                            {/if}
+                            {if $v['state']==1}
+                                <span class="layui-badge" style="background-color: rgb(231, 43, 43);">锁定</span>
+                            {/if}
+                            {if $v['img']!=''}
+                                <span class="layui-badge" style="background-color: rgb(35, 207, 43);">图片</span>
+                            {/if}
+                            {if $v['files']!=0}
+                                <span class="layui-badge" style="background-color: rgb(89, 31, 114);">附件</span>
+                            {/if}
+                        </div>
+                    </li>
+                {/foreach}
+            </ul>
+        </div>
+    </div>
+</div>
+{include common/footer} {include common/foot}

@@ -1,0 +1,4 @@
+
+{if NOW_GID == C("ADMIN_GROUP")}
+<dd><a href="{#HYBBS_URL('post','daishen')}"><i class="layui-icon" style="margin-left: 2px; font-size: 22px;">&#xe60b;</i>帖子审核</a></dd>
+{/if}

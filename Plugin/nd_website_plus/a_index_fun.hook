@@ -1,0 +1,21 @@
+
+/*   __________________________________________________
+    |              http://www.daniuwo.com              |
+    |                    QQ:956716282                  |
+    |__________________________________________________|
+*/
+//<?php 提示
+public function msg(){
+    $msg = X('get.msg');
+    $url = X('get.url');
+    $this->v('title',$msg.' - 提示');
+    $this->v("msg",$msg);
+    $this->v("bool",$url);
+    $this->view = IS_MOBILE ? $this->conf['wapmessview'] : $this->conf['messview'];
+    $this->display('message');
+}
+public function ceshi(){
+
+    require_once PLUGIN_PATH."nd_website_plus/jm000.php";
+    $nd = new \NDMobile($this->conf,$this->_user);
+}

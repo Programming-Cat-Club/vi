@@ -1,0 +1,7 @@
+//<?
+$shenhe_inc = get_plugin_inc('nd_shenhe');
+if($thread_data['shenhe']){
+    if(NOW_UID != $thread_data['uid'] && NOW_GID != C("ADMIN_GROUP") && !is_forumg($this->_forum,NOW_UID,$thread_data['fid'])){
+       return $this->message('帖子审核中...');
+    }
+}

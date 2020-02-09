@@ -1,0 +1,12 @@
+
+/*   __________________________________________________
+    |              http://www.daniuwo.com              |
+    |                    QQ:956716282                  |
+    |__________________________________________________|
+*/
+//<?
+foreach($thread_data as &$v){
+    $v['user'] = $User->uid_to_user($v['uid']);
+    $v['avatar'] = $this->avatar($v['user']);
+}
+// var_dump($thread_data);exit;

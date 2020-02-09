@@ -1,0 +1,129 @@
+/*   __________________________________________________
+    |              http://www.daniuwo.com              |
+    |                    QQ:956716282                  |
+    |__________________________________________________|
+*/
+//<? //发帖记录奖励次数
+            // 加载插件配置文件
+            $inc = get_plugin_inc('nd_website_plus');
+            // 获取审核插件配置
+            $shenhe_inc = get_plugin_inc('nd_shenhe');
+			$User = M("User");
+			//用户增加 主题数
+            $User->update_int(NOW_UID,'threads','+');
+            $post_state = S('plugins_post');
+            $res = $post_state->find('*',['uid'=>NOW_UID]);
+            if($res){
+                $jtime = A('Plugins');
+                $atime = $jtime->timediff(NOW_TIME,$res['thread_atime']);
+                // 判断今日发帖奖励次数
+                if($atime['day'] == 0 && $res['thread_state']<$inc['thread_cishu']){//如果是今天发帖奖励少于5次
+                    // 检查是否开启帖子审核
+                    if($shenhe_inc['shenhe']){
+                        S('plugins_shenhe')->insert(['tid'=>$tid,'state'=>'0']);
+                    }else{
+                        //用户增加 金钱
+                        $User->update_int(NOW_UID,'gold','+',$inc['thread']);
+                        //用户增加 积分
+                        $User->update_int(NOW_UID,'credits','+',$this->conf['credits_thread']);
+            
+                        if($this->conf['gold_thread'] != 0 || $this->conf['credits_thread'] != 0){
+                            S("Log")->insert(array(
+                                'uid'=>NOW_UID,
+                                'gold'=>$inc['thread'],
+                                'credits'=>$this->conf['credits_thread'],
+                                'content'=>'发表文章 文章ID['.$tid.']',
+                                'atime'=>NOW_TIME
+                            ));
+                        }
+                        // 更新数据
+                        $post_state->update([
+                            "thread_state[+]"=>1
+                        ],[
+                            'uid'=>NOW_UID
+                        ]);
+                    }
+
+                }else if($atime['day'] > 0){//如果是昨天
+                    // 检查是否开启帖子审核
+                    if($shenhe_inc['shenhe']){
+                        S('plugins_shenhe')->insert(['tid'=>$tid,'state'=>'0']);
+                    }else{
+                        //用户增加 金钱
+                        $User->update_int(NOW_UID,'gold','+',$inc['thread']);
+                        //用户增加 积分
+                        $User->update_int(NOW_UID,'credits','+',$this->conf['credits_thread']);
+            
+                        if($this->conf['gold_thread'] != 0 || $this->conf['credits_thread'] != 0){
+                            S("Log")->insert(array(
+                                'uid'=>NOW_UID,
+                                'gold'=>$inc['thread'],
+                                'credits'=>$this->conf['credits_thread'],
+                                'content'=>'发表文章 文章ID['.$tid.']',
+                                'atime'=>NOW_TIME
+                            ));
+                        }
+                        $post_state->update([
+                            'thread_state'  => 1,
+                            'thread_atime'  => mktime(0,0,0,date("m"),date("d"),date("Y"))
+                        ],['uid'=>NOW_UID]);
+                    }
+                }
+            }else{//记录第一次奖励
+                // 检查是否开启帖子审核
+                if($shenhe_inc['shenhe']){
+                    S('plugins_shenhe')->insert(['tid'=>$tid,'state'=>'0']);
+                }else{
+                    //用户增加 金钱
+                    $User->update_int(NOW_UID,'gold','+',$inc['thread']);
+                    //用户增加 积分
+                    $User->update_int(NOW_UID,'credits','+',$this->conf['credits_thread']);
+        
+                    if($this->conf['gold_thread'] != 0 || $this->conf['credits_thread'] != 0){
+                        S("Log")->insert(array(
+                            'uid'=>NOW_UID,
+                            'gold'=>$inc['thread'],
+                            'credits'=>$this->conf['credits_thread'],
+                            'content'=>'发表文章 文章ID['.$tid.']',
+                            'atime'=>NOW_TIME
+                        ));
+                    }
+                    $post_state->insert([
+                        'uid'           => NOW_UID,
+                        'thread_state'  => 1,
+                        'thread_atime'  => mktime(0,0,0,date("m"),date("d"),date("Y"))
+                    ]);
+                }
+            }
+
+			//分类板块 帖子数量++
+			M("Forum")->update_int($forum);
+			//{hook a_post_index_19}
+			//更新分类缓存
+			$this->_forum[$forum]['threads']++;
+			$this->CacheObj->forum = $this->_forum;
+			//更新统计缓存
+			$this->_count['thread']++;
+			$this->_count['day_thread']++;
+			$this->CacheObj->bbs_count = $this->_count;
+
+			$this->_user['threads']++;
+
+			//删除第一页缓存
+			$this->CacheObj->rm("index_index_New_1");
+			$this->CacheObj->rm("index_index_Btime_1");
+
+			$this->CacheObj->rm("index_index_{$forum}_1_Btime");
+			$this->CacheObj->rm("index_index_{$forum}_1_New");
+			
+			//{hook a_post_index_20}
+
+			//用户组升级检测
+			M('Usergroup')->check_up(NOW_UID);
+
+            //删除用户当前临时文件夹
+            // var_dump($UserTmpUploadPath);exit;
+			deldir($UserTmpUploadPath,false,true);
+
+			//{hook a_post_index_v}
+            $this->json(array('error'=>true,'info'=>'发表成功','id'=>$tid));exit;

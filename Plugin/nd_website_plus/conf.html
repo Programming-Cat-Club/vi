@@ -1,0 +1,320 @@
+<ul class="nav nav-tabs tab-style2">
+    <li class="active">
+        <a href="#jibenshezhi" data-toggle="tab">
+            <span class="text-wrapper">基本</span>
+        </a>
+    </li>
+    <li class="">
+        <a href="#renwu" data-toggle="tab">
+            <span class="text-wrapper">任务</span>
+        </a>
+    </li>
+    <li class="">
+        <a href="#qiandao" data-toggle="tab">
+            <span class="text-wrapper">签到</span>
+        </a>
+    </li>
+    <li class="">
+        <a href="#email" data-toggle="tab">
+            <span class="text-wrapper">邮箱</span>
+        </a>
+    </li>
+    <li class="">
+        <a href="#biaoqian" data-toggle="tab">
+            <span class="text-wrapper">用户标签</span>
+        </a>
+    </li>
+    <li class="">
+        <a href="#renzheng" data-toggle="tab">
+            <span class="text-wrapper">认证/VIP</span>
+        </a>
+    </li>
+</ul>
+<div class="smart-widget-body">
+    <div class="tab-content">
+        <div class="tab-pane fade active in" id="jibenshezhi">
+            <div class="form-group">
+                <label class="col-lg-3 control-label">注册成功系统提示消息</label>
+                <div class="col-lg-8">
+                    <textarea class="form-control" style="height: 150px;" name="content">{$inc.content}</textarea>
+                    <span class="help-block">
+                        <font style="color: red">系统提示消息</font>,填写一段系统提示。注册后会收到该消息。
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">注册送赠金币</label>
+                <div class="col-lg-8">
+                    <input class="form-control" name="gold" value="{$inc.gold}">
+                    <span class="help-block">
+                        <font style="color: red">赠送金币</font>不赠送填写0
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">注册送赠积分</label>
+                <div class="col-lg-8">
+                    <input class="form-control" name="credits_post" value="{$inc.credits_post}">
+                    <span class="help-block">
+                        <font style="color: red">赠送积分</font>不赠送填写0
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">帖子置精</label>
+                <div class="col-lg-8">
+                    <input class="form-control" name="jing" value="{$inc.jing}">
+                    <span class="help-block">帖子被置精奖励金币</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg-3 control-label">热搜关键词</label>
+                <div class="col-lg-8">
+                    <textarea class="form-control" style="height: 60px;" name="sou_key">{$inc.sou_key}</textarea>
+                    <span class="help-block">设置搜索页面的热搜关键词,多个词用英文逗号分割</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail1" class="col-lg-3 control-label">验证邮箱后才能发帖</label>
+                <div class="col-lg-8">
+                    <div class="radio inline-block">
+                        <div class="custom-radio m-right-xs">
+                            <input type="radio" id="inlineRadio1"{if $inc['email_state'] == 1} checked{/if} name="email_state" value="1">
+                            <label for="inlineRadio1"></label>
+                        </div>
+                        <div class="inline-block vertical-top">开启</div>
+                    </div>
+                    <div class="radio inline-block">
+                        <div class="custom-radio m-right-xs">
+                            <input type="radio" id="inlineRadio2"{if $inc['email_state'] == 0} checked{/if} name="email_state" value="0">
+                            <label for="inlineRadio2"></label>
+                        </div>
+                        <div class="inline-block vertical-top">关闭</div>
+                    </div>
+                    <span class="help-block">开启后需要用户验证邮箱后才能发帖，回帖下载附件等。</span>
+                </div>
+            
+            </div>
+
+
+        </div>
+        <div class="tab-pane fade" id="renwu">
+            <div class="form-group">
+                <label class="col-lg-3 control-label">上传头像奖励金币</label>
+                <div class="col-lg-8">
+                    <input class="form-control" name="touxiang" value="{$inc.touxiang}">
+                    <span class="help-block">首次上传头像奖励金币个数</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">验证邮箱奖励金币</label>
+                <div class="col-lg-8">
+                    <input class="form-control" name="email" value="{$inc.email}">
+                    <span class="help-block">首次验证邮箱奖励金币个数</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">发帖奖励金币</label>
+                <div class="col-lg-4">
+                    <input class="form-control" name="thread" value="{$inc.thread}">
+                    <span class="help-block">单次赠送金币</span>
+                </div>
+                <div class="col-lg-4">
+                    <input class="form-control" name="thread_cishu" value="{$inc.thread_cishu}">
+                    <span class="help-block">每天奖励次数，3=每日只奖励3次</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">回帖奖励金币</label>
+                <div class="col-lg-4">
+                    <input class="form-control" name="post" value="{$inc.post}">
+                    <span class="help-block">单次赠送金币</span>
+                </div>
+                <div class="col-lg-4">
+                    <input class="form-control" name="post_cishu" value="{$inc.post_cishu}">
+                    <span class="help-block">每天奖励次数，5=每日只奖励5次</span>
+                </div>
+            </div>
+        </div>
+        <!-- 用户签到 -->
+        <div class="tab-pane fade" id="qiandao">
+            <div class="form-group">
+                <label class="col-lg-2 control-label">奖励规则:</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" type="text" name="sign_jiangli" style="height:150px">{$inc.sign_jiangli}</textarea>
+                    <span class="help-block">用于奖励的规则,请按照说明配置.</span>
+                    <span class="help-block text-success">LJ|累计签到天数|金币奖励|积分奖励</span>
+                    <span class="help-block text-success">LX|连续签到天数|金币奖励|积分奖励</span>
+                    <span class="help-block text-success">MC|金币奖励|积分奖励</span>
+                    <span class="help-block ">例如: <span style="color:red">LJ|7|10|10</span> 意思是累积签到第七天,奖励金币10,积分10</span>
+                    <span class="help-block ">例如: <span style="color:red">MC|1|10</span> 意思是每次签到,奖励金币1,积分10</span>
+                    <span class="help-block " style="color:#9C27B0">注意:MC项必须配置(也就是每日签到奖励必须配置)</span>
+
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label">签到规则:</label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" type="text" name="sign_mess" style="height:150px">{$inc.sign_mess}</textarea>
+                    <span class="help-block">用于显示在签到页面的签到规则描述</span>
+                </div>
+            </div>
+        </div>
+        <!-- 邮件配置 -->
+        <div class="tab-pane fade" id="email">
+            <div class="form-group">
+                <label class="col-lg-3 control-label">SMTP地址:</label>
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="emali_smtp" value="{$inc.emali_smtp}">
+                    <span class="help-block">填写邮箱SMTP服务器地址</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">邮箱端口:</label>
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="emali_port" value="{$inc.emali_port}">
+                    <span class="help-block">邮箱端口一般为25，QQ=465，163=456，集体看邮箱服务商帮助说明</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">邮箱账号:</label>
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="emali_user" value="{$inc.emali_user}">
+                    <span class="help-block">输入邮箱账号</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">邮箱密码:</label>
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="emali_pass" value="{$inc.emali_pass}">
+                    <span class="help-block">输入邮箱密码</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">发信邮箱:</label>
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="emali_faxin_email" value="{$inc.emali_faxin_email}">
+                    <span class="help-block">输入发送信息邮箱地址,最好和邮箱账号一致</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">发信名称:</label>
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="emali_faxin_name" value="{$inc.emali_faxin_name}">
+                    <span class="help-block">输入发信人名称</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-3 control-label">测试发信:</label>
+                <div class="col-lg-5">
+                    <input class="form-control" type="text" name="emali_test_email" value="{$inc.emali_test_email}">
+                    <span class="help-block">请输接收账号，测试是否配置正确,<b style="color:red">发送前请先保存配置</b></span>
+                </div>
+                <div class="col-lg-3">
+                    <a href="javascript:;" class="btn btn-info" onclick="send_email()">发送</a>
+                    <span class="help-block"></span>
+                </div>
+            </div>
+            <script>
+                function send_email() {
+                    var datas = $('[name="emali_test_email"]').val();
+                    // console.log(datas);
+                    $.post("{#HYBBS_URL('plugins','test_email')}", { data: datas }, function (e) {
+                        if (e.error) {
+                            swal("发送成功", e.info, "success");
+                        } else {
+                            swal("发送失败", e.info, "error");
+                        }
+                    }, 'json');
+                }
+            </script>
+        </div>
+        <div class="tab-pane fade" id="biaoqian">
+            <div class="form-group">
+                <label class="control-label">用户组标签颜色配置</label>
+                <textarea class="form-control" name="style" id="" style="height:150px;">{$inc.style}</textarea>
+                <span class="help-block">用法:用户ID|字体颜色|背景颜色,多条请换行</span>
+                <span class="help-block">例子:1|#FFF|#ff6a00</span>
+                <span class="help-block"><b style="color:#03a9f4">需要注意新增用户组需要在此增加用户组id，不然不会显示用户标签</b></span>
+            </div>
+            <div class="form-group">
+                <label class="control-label">用户等级标签</label>
+                <textarea class="form-control" name="user_lv"" id="" style="height:150px;">{$inc.user_lv}</textarea>
+                <span class="help-block"><b style="color:#6b03f4">一行表示一个等级，前两个为例，10表示0~10积分显示等级1,30表示0~30显示2级，如果当前积分大于10小于30就显示2级</b></span>
+                <span class="help-block">用法:积分|等级颜色|背景颜色</span>
+                <span class="help-block">例子:10|#FFF|#ff6a00，多条请换行</span>
+                <span class="help-block" style="color:red">当然还有个满级,如果用户积分大于这里的最大积分设置就会判断成满级，满级会显示lv.Max  背景闪烁</span>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="renzheng">
+            <div class="form-group">
+                <label class="col-lg-12 control-label">VIP用户名颜色</label>
+                <div class="col-lg-12">
+                    <input type="color" class="form-control" name="color" value="{$inc.color}">
+                    <span class="help-block"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-12 control-label">验证用户如表颜色</label>
+                <div class="col-lg-12">
+                    <input type="color" class="form-control" name="yan_color" value="{$inc.yan_color}">
+                    <span class="help-block"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-12 control-label">VIP用户组绑定</label>
+                <div class="col-lg-12">
+                    <select name="vip_on" id="" class="form-control">
+                        <?php
+                        $group = S('usergroup');
+                        $gdata = $group->select(['name','gid'],['gid[!]'=>[1,3]]);
+                        ?>
+                        <option value="0">用户组设置</option>
+                        {foreach $gdata as $v}
+                        <option value="{$v.gid}" {if $inc['vip_on'] == $v['gid']} selected {/if}>{$v.name}</option>
+                        {/foreach}
+                    </select>
+                    <span class="help-block">当用户 <span class="text-danger">开通vip</span> 后会自动切换到这个用户组</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-12 control-label">普通用户组绑定</label>
+                <div class="col-lg-12">
+                    <select name="vip_off" id="" class="form-control">
+                        <option value="0">用户组设置</option>
+                        {foreach $gdata as $v}
+                        <option value="{$v.gid}" {if $inc['vip_off'] == $v['gid']} selected {/if}>{$v.name}</option>
+                        {/foreach}
+                    </select>
+                    <span class="help-block">用户 <span class="text-danger">VIP到期</span> 后会切换到这个用户组</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-12 control-label">VIP特权自定义HTML</label>
+                <div class="col-lg-12">
+                    <textarea type="color" class="form-control" name="vip_tequan" rows="5">{$inc.vip_tequan}</textarea>
+                    <span class="help-block">VIP特权描述,HTML来展示</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-12 control-label">VIP套餐设置</label>
+                <div class="col-lg-12">
+                    <textarea type="color" class="form-control" name="vip_taocan" rows="4">{$inc.vip_taocan}</textarea>
+                    <span class="help-block">使用帮助:</span>
+                    <span class="help-block">例如: <span class="text-danger">包年套餐|280|360|2800|360</span> </span>
+                    <span>套餐名称|实际收费|参考价格|金币价格|购买天数 ,多个套餐请换行</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-12 control-label">客服QQ</label>
+                <div class="col-lg-12">
+                    <textarea type="color" class="form-control" name="vip_kefu" rows="4">{$inc.vip_kefu}</textarea>
+                    <span class="help-block">请输入客服QQ,在手机端可以直接打开聊天窗口</span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+</div>

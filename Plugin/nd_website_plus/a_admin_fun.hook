@@ -1,0 +1,82 @@
+
+//<?
+public function User_tag_group(){
+    if(IS_POST){
+        $gn = X('gn');
+        $gname = X('gname');
+        $id = X('id');
+        $usertaggroup =  S('user_tag_group');
+        if($gn == 'add'){
+            if($usertaggroup->count(['name'=>$gname])){
+                return $this->message('已存在');
+            }
+            $usertaggroup->insert([
+                'name' => $gname,
+            ]);
+            return $this->message('增加成功',true);
+        }elseif($gn == 'edit'){
+            $usertaggroup->update([
+                'name' => $gname,
+            ],['id'=>$id]);
+            return $this->message('修改成功',true);
+        }elseif($gn == 'del'){
+            $usertaggroup->update([
+                'AND'=>[
+                    'id'=>$id
+                ]
+            ]);
+        }
+    }
+    $data = S('user_tag_group')->select('*');
+    $this->v('data',$data);
+    return $this->display('plugin.nd_website_plus::user_tag_group.php');
+}
+public function User_tag(){
+    if(IS_POST){
+        $gn = X('gn');
+        $name = X('name');
+        $color= X('color');
+        $tagid=X('tagid');
+        $tagfid=X('tag_fid');
+        $usertag =  S('user_tag');
+        if($gn == 'add'){
+            if(empty($tagfid)){
+                return $this->message('请选中一个分类');
+            }
+            if($usertag->count(['name'=>$name])){
+                return $this->message('已存在');
+            }
+            $usertag->insert([
+                'name' => $name,
+                'tag_fid'=>$tagfid,
+                'color'=>$color
+            ]);
+            return $this->message('增加成功',true);
+        }elseif($gn == 'edit'){
+            if(empty($tagfid)){
+                return $this->message('请选中一个分类');
+            }
+            $usertag->update([
+                'name'=>$name,
+                'color'=>$color,
+                'tag_fid'=>$tagfid
+            ],['tag_id'=>$tagid]);
+            return $this->message('修改成功',true);
+        }elseif($gn == 'del'){
+            $usertag->delete([
+                'AND'=>[
+                    'tag_id'=>$tagid
+                ]
+            ]);
+            return $this->message('删除成功',true);
+        }
+    }
+    $data = S('user_tag')->select('*');
+    foreach($data as &$v){
+        $v['gname'] = S('user_tag_group')->find('name',['id'=>$v['tag_fid']]);
+    }
+    $group = S('user_tag_group')->select('*');
+    $this->v('group',$group);
+    $this->v('data',$data);
+    return $this->display('plugin.nd_website_plus::user_tag.php');
+}

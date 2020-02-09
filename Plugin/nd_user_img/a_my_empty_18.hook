@@ -1,0 +1,17 @@
+
+if($method == 'style'){
+
+    if(!IS_LOGIN)
+        return $this->message("未登录，无法查看该页面");
+    if(NOW_UID != $uid)
+        return $this->message("非法访问");
+    $data = $User->read($uid);
+    $data['avatar'] = $this->avatar($data['user']);
+
+    $this->v('data',$data);
+    $this->v("title","设置背景");
+    if(IS_SHOUJI){
+        $this->display('plugin.nd_user_img::user_style');
+    }
+            
+}

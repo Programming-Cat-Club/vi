@@ -1,0 +1,15 @@
+/*   __________________________________________________
+    |              http://www.daniuwo.com              |
+    |                    QQ:956716282                  |
+    |__________________________________________________|
+*/
+//<?php
+$inc = get_plugin_inc('nd_website_plus');
+// 开启邮箱验证
+if($inc['email_state'] == 1){
+    if(IS_LOGIN){
+        if($this->_user['email_state'] == 0){
+            $this->message('需要验证邮箱后才能继续操作,请前往个人设置验证。');exit;
+        }
+    }
+}

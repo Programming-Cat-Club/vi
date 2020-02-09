@@ -1,0 +1,14 @@
+<div id="hide-box" class="hy-box" style="padding:10px;">
+    <h3>插入隐藏内容 (回复部分可见)</h3>
+    <div class="hy-input-box" style="margin-bottom:10px">
+        <input type="text" id="hide-input" placeholder="隐藏的内容">
+    </div>
+   
+    <button type="button" class="hy-btn hy-btn-primary" onclick="insertText('[hide]'+$('#hide-input').val()+'[/hide]')">插入隐藏内容</button>
+</div>
+<script type="text/javascript">
+	function insertText(a) {        
+        if(!document.execCommand('insertHTML', false, a))
+            $('#editor').append(a)
+    }
+</script>

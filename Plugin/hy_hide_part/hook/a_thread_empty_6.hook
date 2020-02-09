@@ -1,0 +1,16 @@
+//<?php
+$this->conf['description'] = mb_substr(strip_tags( preg_replace("/\[hide\].+?\[\/hide\]/is",'',$PostData['content'])), 0,100);
+$this->v('conf',$this->conf);
+//不是版主 也不是 管理员
+$hide_part_bool = $Post->has(array('AND'=>array('tid'=>$tid,'uid'=>NOW_UID)));
+$hy_hide_part_inc = get_plugin_inc('hy_hide_part');
+if(
+	!is_forumg($this->_forum,NOW_UID,$thread_data['fid']) && //不是板块版主
+	NOW_GID != C("ADMIN_GROUP") && //不是管理员
+	!$hide_part_bool &&//没有回复过帖子
+	!in_array(NOW_GID,explode(",",$hy_hide_part_inc['group_list'])) //过滤配置用户组
+){//隐藏内容
+   	$PostData['content'] = preg_replace("/\[hide\].+?\[\/hide\]/is",'<hide>'.$hy_hide_part_inc['hide_title'].'</hide>',$PostData['content']);
+}else{
+	$PostData['content'] = preg_replace("/\[hide\](.+?)\[\/hide\]/is",'<hide>$1</hide>',$PostData['content']);
+}

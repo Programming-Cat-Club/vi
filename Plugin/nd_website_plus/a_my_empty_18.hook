@@ -1,0 +1,154 @@
+/*   __________________________________________________
+    |              http://www.daniuwo.com              |
+    |                    QQ:956716282                  |
+    |__________________________________________________|
+*/
+//<?
+//收藏
+if($method == 'collection'){
+    $pageid=intval(isset($_GET['HY_URL'][3]) ? $_GET['HY_URL'][3] : 1) or $pageid=1;
+
+    $data = $User->read($uid);
+    $data['avatar'] = $this->avatar($data['user']);
+    $this->v('data',$data);
+    $this->v("title","收藏");
+
+    $collection = S('plugins_collection');
+    $collection_data = $collection->select('*',[
+        'uid'=>NOW_UID,
+        'ORDER'=>['id'=>'DESC'],
+        'LIMIT' =>[($pageid-1) * 10, 10],
+    ]);
+    
+    foreach($collection_data as &$v){
+        $thread = S('thread')->find('*',['tid'=>$v['tid']]);
+        $v['title'] = $thread['title'];
+        $v['summary'] = $thread['summary'];
+        $v['views'] = $thread['views'];
+        $v['posts'] = $thread['posts'];
+        $v['fid'] = $thread['fid'];
+        $v['jing'] = $thread['jing'];
+        $v['goods'] = $thread['goods'];
+        $v['shenhe'] = isset($thread['shenhe'])?$thread['shenhe']:'';
+        $v['user'] = $User->uid_to_user($v['uid']);
+        $v['avatar'] = $User->avatar($v['user']);
+    }
+    $count = $collection->count(['uid'=>NOW_UID]);
+    $page_count = ($count % 10 != 0)?(intval($count/10)+1) : intval($count/10);
+
+    $this->v("count",$count);
+    $this->v("pageid",$pageid);
+    $this->v("page_count",$page_count);
+    $this->v('collection_data',$collection_data);
+    $this->display('user_collection');
+}elseif($method == 'visitor'){//访客
+
+    $pageid=intval(isset($_GET['HY_URL'][3]) ? $_GET['HY_URL'][3] : 1) or $pageid=1;
+
+    $data = $User->read($uid);
+    $data['avatar'] = $this->avatar($data['user']);
+    $this->v('data',$data);
+    $this->v("title","访客");
+
+    $Log = S('Log');
+    $log_data = $Log->select('*',[
+        'uid'=>NOW_UID,
+        'ORDER'=>['id'=>'DESC'],
+        'LIMIT' =>[($pageid-1) * 10, 10],
+    ]);
+
+    $count = $Log->count(['uid'=>NOW_UID]);
+    $page_count = ($count % 10 != 0)?(intval($count/10)+1) : intval($count/10);
+
+    $this->v("count",$count);
+    $this->v("pageid",$pageid);
+    $this->v("page_count",$page_count);
+    $this->v('log_data',$log_data);
+    $this->display('user_visitor');
+}elseif($method == 'user_style'){
+
+    if(!IS_LOGIN)
+        return $this->message("未登录，无法查看该页面");
+    if(NOW_UID != $uid)
+        return $this->message("非法访问");
+    $data = $User->read($uid);
+    $data['avatar'] = $this->avatar($data['user']);
+
+    $this->v('data',$data);
+    $this->v("title","设置背景");
+    if(IS_SHOUJI){
+        $this->display('user_style');
+    }
+            
+}elseif($method == 'my'){
+    if(!IS_LOGIN){
+        header('Location: '.WWW);exit;
+    }
+    $this->v('title','个人中心');
+    $data = $User->read($uid);
+    $data['avatar'] = $this->avatar($uid);
+    $this->v('data',$data);
+    if(IS_SHOUJI){
+        $this->display('user_my');
+    }    
+}elseif($method == 'vip'){
+    $this->v('title','会员中心');
+    $data = $User->read($uid);
+    $data['avatar'] = $this->avatar($uid);
+    $vip_data = S("uvip")->find('*',['uid'=>$uid]);
+    if($vip_data)
+        $vip_data['str_atime'] = $this->humandate_noe($vip_data['atime']);
+
+    $this->v('vip_data',$vip_data);
+    $this->v('data',$data);
+    if(IS_SHOUJI){
+        $this->display('user_vip');
+    }
+}elseif($method == 'vip-pay'){
+    if(!IS_LOGIN){
+        header('Location: '.HYBBS_URLA('user','login'));
+        //exit('请登录前台!');
+        exit;
+    }
+    $this->v('title','会员中心');
+    $data = $User->read($uid);
+    $data['avatar'] = $this->avatar($uid);
+    $vip_data = S("uvip")->find('*',['uid'=>$uid]);
+    if($vip_data)
+        $vip_data['str_atime'] = $this->humandate_noe($vip_data['atime']);
+    $this->v('vip_data',$vip_data);
+
+    $this->v('data',$data);
+    if(IS_SHOUJI){
+        $this->display('user_vip_pay');
+    }
+}elseif($method == 'mytag'){
+    if(!IS_LOGIN){
+        header('Location: '.HYBBS_URLA('user','login'));
+        //exit('请登录前台!');
+        exit;
+    }
+    if(IS_POST){
+        $tagid = trim(X('tags'));
+        $str1 = substr($tagid,0,1);
+        if($str1 == ','){
+            $tagid = str_replace(substr($tagid,0,2),substr($tagid,1,1),$tagid);
+        }
+        
+        $User->update(['tagid'=>$tagid],['uid'=>NOW_UID]);
+        return $this->message('提交成功',true);
+    }
+    $tags = S('user_tag')->select('*');
+    $tag_group = S('user_tag_group')->select('*');
+    $xuanze = S('user_tag')->select('*',[
+            'tag_id'    => array_filter(explode(",",$this->_user['tagid'])),
+            'ORDER'     => ['tag_id'=>array_filter(explode(",",$this->_user['tagid']))]
+        ]);
+    
+    $this->v('xuanze_val',$this->_user['tagid']);
+    $this->v('tag_group',$tag_group);
+    $this->v('tags',$tags);
+    $this->v('xuanze',$xuanze);
+    $this->v('title','我的标签');
+    $this->display('user_tag');
+}

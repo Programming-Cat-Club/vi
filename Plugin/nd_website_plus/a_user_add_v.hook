@@ -1,0 +1,22 @@
+    /*   __________________________________________________
+    |              http://www.daniuwo.com              |
+    |                    QQ:956716282                  |
+    |__________________________________________________|
+*/
+    //<?php 注册送金币功能
+    $inc = get_plugin_inc('nd_website_plus');
+    $content = $inc['content'];
+    M("Chat")->sys_send($uid,$content);
+    $User = M("User");
+    if($inc['gold']!= 0){
+        $User->update_int($uid,'gold','+',$inc['gold']);
+        $User->update_int($uid,'credits','+',$inc['credits_post']);
+
+        S("Log")->insert(array(
+            'uid'=>$uid,
+            'gold'=>$inc['gold'],
+            'credits'=>$inc['credits_post'],
+            'content'=>'新注册赠送系统'.$inc['gold'].'金币和'.$inc['credits_post'].'积分',
+            'atime'=>NOW_TIME
+        ));
+    }

@@ -1,0 +1,1 @@
+<dd><a href="{#HYBBS_URL('my',$user['user'],'pay')}"><i class="layui-icon" style="font-size:22px;left:2px">&#xe659;</i>金币充值</a></dd>

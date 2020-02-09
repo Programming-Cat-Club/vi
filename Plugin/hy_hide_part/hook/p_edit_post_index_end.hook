@@ -1,0 +1,36 @@
+<script type="text/javascript">
+UM.registerUI('hide',
+        function(name) {
+            var me = this;
+            var $btn = $.eduibutton({
+                
+                click : function(){
+                    me.execCommand('insertHtml', "[hide]隐藏内容[/hide]"); 
+                    return true; 
+                },
+                icon:'hide',
+                title: '测试',
+                text:'部分隐藏',
+                label:'测试',
+            });
+
+            this.addListener('selectionchange',function(){
+                //切换为不可编辑时，把自己变灰
+                var state = this.queryCommandState(name);
+                $btn.edui().disabled(state == -1).active(state == 1)
+            });
+            return $btn;
+        }
+);
+</script>
+<style type="text/css">
+    .edui-icon-hide{
+      height: 0 !important;
+    }
+    .edui-icon-hide+span{
+      font-size: 12px;
+      display: block;
+      margin-top: 11px;
+    }
+
+</style>

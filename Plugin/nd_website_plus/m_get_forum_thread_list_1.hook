@@ -1,0 +1,12 @@
+        $fids = S('forum')->select('id',['fid'=>$fid]);
+        array_unshift($fids,$fid);
+        $data = $this->select('*',[
+            'fid'   => $fids,
+            'ORDER' => $order,
+            'LIMIT' => [
+                ($pageid-1) * $size,
+                $size
+            ]
+        ]);
+        return $data;
+        //var_dump($data);exit;

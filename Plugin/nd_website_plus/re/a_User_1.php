@@ -1,0 +1,2 @@
+        if(!$Email->sendmail($email,$emailuser,$this->conf['emailtitle'],sprintf($this->conf['emailcontent'],$data['user'],$code),'HTML'))
+            $this->json(array('error'=>false,'info'=>'发送失败,具体原因:'.$Email->error_mess));

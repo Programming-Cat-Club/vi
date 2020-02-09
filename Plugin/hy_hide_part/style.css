@@ -1,0 +1,28 @@
+@font-face {
+  font-family: 'hyhideparticomoon';
+  src:  url('fonts/icomoon.eot?z05ms4');
+  src:  url('fonts/icomoon.eot?z05ms4#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?z05ms4') format('truetype'),
+    url('fonts/icomoon.woff?z05ms4') format('woff'),
+    url('fonts/icomoon.svg?z05ms4#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+.simditor-icon-hide:before {
+  display: inline-block;
+  font: normal normal normal 14px/1 'hyhideparticomoon';
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transform: translate(0, 0);
+  content: "\e9d1";
+}
+hide{
+     padding: 5px 0 5px 10px;
+    margin: 15px 0 13px 15px;
+    background: #f1f1f1;
+    display: block;
+    border: solid 2px #ababab;
+    border-style: dashed;
+}

@@ -1,0 +1,12 @@
+<li class="bg-palette3 {if METHOD_NAME == 'Pay'}active open{/if}">
+	<a href="{php HYBBS_URL('admin','pay')}">
+		<span class="menu-content block">
+			<span class="menu-icon"><i class="block fa fa-cny fa-lg"></i></span>
+			<span class="text m-left-sm">金币充值</span>
+
+		</span>
+		<span class="menu-content-hover block">
+			金币充值
+		</span>
+	</a>
+</li>

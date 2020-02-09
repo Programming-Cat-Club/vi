@@ -1,0 +1,415 @@
+
+// <?php 扫码支付业务程序
+/**
+ * 支付回调
+ * 接收到的POST参数
+ * @return string 返回处理的结果
+ */
+public function notify(){
+    // 导入插件配置
+    $nd_pay_conf = get_plugin_inc('nd_codepay');
+    $isPost = true;                             //默认为POST传入
+    if (empty($_POST)) {                        //如果GET访问
+        $_POST      = $_GET;                    //POST访问 为服务器或软件异步通知  不需要返回HTML
+        $isPost     = false;                    //标记为GET访问  需要返回HTML给用户
+    }
+    ksort($_POST);                              //排序post参数
+    reset($_POST);                              //内部指针指向数组中的第一个元素
+    $codepay_id     = $nd_pay_conf['id'];       // 商户id
+    $codepay_key    = $nd_pay_conf['key'];      // 商户密匙
+    $sign           = '';                       // 加密字符串初始化
+    unset($_POST['s']);
+    unset($_POST['HY_URL']);
+    // if (empty($_POST)) {                    //如果GET访问
+        // return $this->message('参数错误');
+    // }
+    foreach ($_POST AS $key => $val) {
+        if ($val == '' || $key == 'sign') continue; //跳过这些不签名
+        if ($sign) $sign .= '&';                //第一个字符串签名不加& 其他加&连接起来参数
+        $sign   .= "$key=$val";                 //拼接为url参数形式
+    }
+	$pay_id     = '';                           //需要充值的ID 或订单号 或用户名
+	$money      = 0;                            //实际付款金额
+	$price      = '';                           //订单的原价
+	$param      = '1';                          //自定义参数
+	$pay_time   = '';                           //付款时间戳
+	$type       = '';                           //支付方式
+	$pay_no     = '';                           //流水号
+    $result     = '';                           //支付状态
+    if (!isset($_POST['pay_no']) || md5($sign . $codepay_key) != $_POST['sign']) { //不合法的数据
+        if ($isPost) exit('fail');              //返回失败 继续补单
+        $result = '支付失败';
+        $pay_id = "支付失败";
+        $pay_no = "支付失败";
+        if ($type < 1) $type = 1;
+    } else { //合法的数据
+        //业务处理
+        $result = $this->DemoHandle($_POST);    //调用示例业务代码 处理业务获得返回值
+		$pay_id     = $_POST['pay_id'];         //需要充值的ID 或订单号 或用户名
+		$money      = (float)$_POST['money'];   //实际付款金额
+		$price      = (float)$_POST['price'];   //订单的原价
+		$param      = isset($_POST['param'])?$_POST['param']:'';//自定义参数
+		$pay_time   = (int)$_POST['pay_time'];  //付款时间戳
+		$type       = (int)$_POST['type'];      //支付方式
+		$pay_no     = $_POST['pay_no'];         //流水号
+		
+        if ($result == 'ok' || $result == 'success') { //返回的是业务处理完成
+            if (!DEBUG) ob_clean();             //如果非调试模式 清除之前残留的东西直接打印成功
+            if ($isPost) exit($result);         //服务器访问 业务处理完成 下面不执行了
+            $result = '支付成功';
+        } else {
+            $error_msg = defined('DEBUG') && DEBUG ? $result : 'no'; //调试模式显示 否则输出no
+            if ($isPost) exit($error_msg);      //服务器访问 返回给服务器
+            $result = '支付失败';
+        }
+    }
+    $this->v('type',$type);
+    $this->v('money',$money);
+    $this->v('pay_id',$pay_id);
+    $this->v('pay_no',$pay_no);
+    $this->v('result',$result);
+    $this->display('plugin.nd_codepay::notify');
+}
+// 扫码页面
+public function codepay()
+{
+    
+    if(!IS_LOGIN) {
+        return $this->message('请登录后再试');   //登录后才能访问
+    }
+    $nd_pay_conf = get_plugin_inc('nd_codepay');//导入插件配置
+    $pay_id    = NOW_UID;                       //获取用户id
+    $price  = (float)X('post.price');           //提交的价格
+    $param  = '';                               //自定义参数  可以留空 传递什么返回什么 用于区分游戏分区或用户身份
+    $type   = (int)X('post.type');              //支付方式
+    if ($type < 1) {
+        $type = 1;                              //默认支付方式 支付宝
+    }
+    if ($price <= 0){
+        $price = (float)X('post.money');        //如果没提供自定义输入金额则使用money参数
+    }
+    if ($price < $nd_pay_conf['min']){          //最低充值金额
+        return $this->message("最低充值 {$nd_pay_conf['min']} 元");
+    }
+    //获取客户端IP地址
+    function getIp()
+    { //取IP函数
+        static $realip;
+        if (isset($_SERVER)) {
+            if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                $realip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+            } else {
+                $realip = isset($_SERVER['HTTP_CLIENT_IP']) ? $_SERVER['HTTP_CLIENT_IP'] : $_SERVER['REMOTE_ADDR'];
+            }
+        } else {
+            if (getenv('HTTP_X_FORWARDED_FOR')) {
+                $realip = getenv('HTTP_X_FORWARDED_FOR');
+            } else {
+                $realip = getenv('HTTP_CLIENT_IP') ? getenv('HTTP_CLIENT_IP') : getenv('REMOTE_ADDR');
+            }
+        }
+        return $realip;
+    }
+    /**
+     * 这里可以自行创建站内订单将用户提交的数据保存到数据库生成订单号
+     *
+     * 嫌麻烦pay_id直接传送用户ID或用户名(中文用户名请确认编码一致)
+     * 我们支持GBK,gb2312,utf-8 如发送中文遇到编码困扰无法解决 可以尽量使用UTF-8
+     * 万能解决方法：base64或者urlencode加密后发送我们. 处理业务的时候转回来
+     */
+    //构造要请求的参数数组，无需改动
+    if(X('post.sign')){                                     //来自代理网关 验证签名
+        ksort($_POST);                                      //排序post参数
+        reset($_POST);                                      //内部指针指向数组中的第一个元素
+        $sign = '';                                         //加密字符串初始化
+        foreach ($_POST AS $key => $val) {
+            if ($val == '' || $key == 'sign') continue;     //跳过这些不签名
+            if ($sign) $sign .= '&';                        //第一个字符串签名不加& 其他加&连接起来参数
+            $sign .= "$key=$val";                           //拼接为url参数形式
+        }
+        if (md5($sign .  $nd_pay_conf['key']) != $_POST['sign']) { //不合法的数据
+            return $this->message('签名验证失败');
+        }else{
+            $parameter = $_POST;                            //验证签名成功后使用传入的参数 作为代理
+        }
+    }else{
+        $parameter = array(
+            "id"            => (int)$nd_pay_conf['id'],     //平台ID号
+            "type"          => $type,                       //支付方式
+            "price"         => (float)$price,               //原价
+            "pay_id"        => $pay_id,                     //可以是用户ID,站内商户订单号,用户名
+            "param"         => $param,                      //自定义参数
+            "act"           => '0',                         //此参数即将弃用
+            "outTime"       => (int)$nd_pay_conf['outTime'],//二维码超时设置
+            "page"          => 4,                           //订单创建返回JS 或者JSON
+            "return_url"    => HYBBS_URLA('user','notify'), //付款后附带加密参数跳转到该页面
+            "notify_url"    => HYBBS_URLA('user','notify'), //付款后通知该页面处理业务
+            // "style"         => (int)$nd_pay_conf['style'],  //付款页面风格
+            "pay_type"      => $nd_pay_conf['pay_type'],    //支付宝使用官方接口
+            "user_ip"       => getIp(),                     //付款人IP
+            // "qrcode_url"    => $nd_pay_conf['qrcode_url'],  //本地化二维码
+            "chart"         => trim(strtolower('utf-8'))    //字符编码方式
+            //其他业务参数根据在线开发文档，添加参数.文档地址:https://codepay.fateqq.com/apiword/
+            //如"参数名"=>"参数值"
+        );
+    }
+
+    $back = $this->create_link($parameter, $nd_pay_conf['key']);
+    switch ((int)$type) {
+        case 1:
+            $typeName = '支付宝';
+            break;
+        case 2:
+            $typeName = 'QQ';
+            break;
+        default:
+            $typeName = '微信';
+    }
+    //准备传给前端输出的JSON
+    $user_data = array(
+        "return_url"    => $parameter["return_url"],
+        "type"          => $parameter['type'],
+        "outTime"       => $parameter["outTime"],
+        "codePay_id"    => $parameter["id"],
+        "out_trade_no"  => $parameter["param"],
+        "price"         => $parameter['price'],
+        'money'         => $parameter['price'],
+        'order_id'      => $parameter["param"],
+        "subject"       => '',                              //商品名字
+    ); //传给网页JS去执行
+    if ($parameter['page'] != 3) {                          //只要不为3 返回JS 就去服务器加载资源
+        $parameter['page'] = "4";                           //设置返回JSON
+        $back = $this->create_link($parameter, $nd_pay_conf['key'], $nd_pay_conf['gateway']); //生成支付URL
+        if (function_exists('file_get_contents')) {         //如果开启了获取远程HTML函数 file_get_contents
+            $codepay_json = file_get_contents($back['url']);//获取远程HTML
+        } else if (function_exists('curl_init')) {
+            $ch = curl_init();                              //使用curl请求
+            $timeout = 5;
+            curl_setopt($ch, CURLOPT_URL, $back['url']);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $codepay_json = curl_exec($ch);
+            curl_close($ch);
+        }
+    }
+    
+    if (empty($codepay_json)) { //如果没有获取到远程HTML 则走JS创建订单
+        $parameter['call'] = "callback";
+        $parameter['page'] = "3";
+        $back = $this->create_link($parameter, $codepay_config['key'], 'https://codepay.fateqq.com/creat_order/?');
+        $codepay_html = '<script src="' . $back['url'] . '"></script>'; //JS数据
+    } else { //获取到了JSON
+        $codepay_data = json_decode($codepay_json);
+        $qr = $codepay_data ? $codepay_data->qrcode : '';
+        $codepay_html = "<script>callback({$codepay_json})</script>"; //JSON数据
+    }
+    
+    $this->v('qr',$qr);
+    $this->v('type',$type);
+    $this->v('price',$price);
+    $this->v('typeName',$typeName);
+    $this->v('user_data',$user_data);
+    $this->v('codepay_html',$codepay_html);
+    // var_dump($typeName);exit;
+    $this->display('plugin.nd_codepay::codepay.html');
+}
+/**
+ * 业务处理
+ * @param $data 接收到的POST参数
+ * @return string 返回处理的结果
+ */
+protected function DemoHandle($data)
+{ //业务处理例子 返回一些字符串
+    // 导入插件配置
+    $nd_pay_conf = get_plugin_inc('nd_codepay');
+
+    $pay_id     = $data['pay_id'];              //需要充值的用户ID 
+    $money      = (float)$data['money'];        //实际付款金额
+    $price      = (float)$data['price'];        //订单的原价
+    $type       = (int)$data['type'];           //支付方式
+    $pay_no     = $data['pay_no'];              //支付流水号
+    $param      = isset($_POST['param'])?$_POST['param']:'';//自定义参数 原封返回 您创建订单提交的自定义参数
+    $pay_time   = (int)$data['pay_time'];       //付款时间戳
+    $pay_tag    = $data['tag'];                 //支付备注 仅支付宝才有 其他支付方式全为0或空
+    $status     = 2;                            //业务处理状态 这里就全设置为2  如有必要区分是否业务同时处理了可以处理完再更新该字段为其他值
+    $creat_time = NOW_TIME;                     //创建数据的时间戳
+    $jinbi      = $money*$nd_pay_conf['bili'];  //充值的金币
+    $jifen      = $money*$nd_pay_conf['jifenbili'];//充值的积分
+    
+    if(S('user')->count(['uid'=>$pay_id])==0){  // 检测充值用户
+        return '用户不存在'; 
+    } 
+    if ($money <= 0 || empty($pay_id) || $pay_time <= 0 || empty($pay_no)) {
+        return '缺少必要的一些参数';             //测试数据中 唯一标识必须包含这些
+    }
+    
+    $data_order = [                            // 订单数据
+        'pay_id'    => $pay_id,
+        'money'     => $money,
+        'jinbi'     => $jinbi,
+        'jifen'     => $jifen,
+        'price'     => $price,
+        'type'      => $type,
+        'pay_no'    => $pay_no,
+        'param'     => $param,
+        'pay_time'  => $pay_time,
+        'pay_tag'   => $pay_tag,
+        'status'    => $status,
+        'creat_time'=> $creat_time
+    ];
+
+    $Codepay_order = S('nd_codepay_order');                         // 实例化S('nd_codepay_order')
+	if($Codepay_order->count(['pay_no'=>$pay_no])==0){              // 查询订单是否存在
+		$Codepay_order->insert($data_order);                        // 订单在数据库不存在才会执行订单入库
+	}
+    if($Codepay_order->count(['pay_no'=>$pay_no,'status'=>2]) > 0){ // 查询状态是否成功
+        // 如果当前$pay_no 状态大于0 执行下面  (0是充值成功后的状态)
+        M('User')->update_int($pay_id,'gold','+',($jinbi));         // 增加用户金币
+        M('User')->update_int($pay_id,'credits','+',($jifen));      // 增加用户金币
+        S('log')->insert(array(                                     // 增加流水记录
+            'uid'		=>	$pay_id,                                // 用户id
+            'gold'		=>	$jinbi,                                 // 充值的金币
+            'content'	=>	"金币充值 [单号:".$pay_no."]",           // 订单号
+            'atime'		=>	$pay_time,                              // 支付完成时间
+            'credits'	=>  $jifen                                  // 用户积分
+        ));
+        M("Chat")->sys_send($pay_id,"成功充值 {$jinbi} 金币");       // 发送站内消息
+        $Codepay_order->update(['status'=>0],['pay_no'=>$pay_no]);  // 更新状态 0 = 金币充值成功
+    }
+    return 'ok';
+}
+/**
+ * 加密函数
+ * @param $params 需要加密的数组
+ * @param $codepay_key //码支付密钥
+ * @param string $host //使用哪个域名
+ * @return array
+ */
+protected function create_link($params, $codepay_key, $host = "")
+{
+    ksort($params);                                         //重新排序$data数组
+    reset($params);                                         //内部指针指向数组中的第一个元素
+    $sign = '';
+    $urls = '';
+    foreach ($params AS $key => $val) {
+        if ($val == '') continue;
+        if ($key != 'sign') {
+            if ($sign != '') {
+                $sign .= "&";
+                $urls .= "&";
+            }
+            $sign .= "$key=$val";                           //拼接为url参数形式
+            $urls .= "$key=" . urlencode($val);             //拼接为url参数形式
+        }
+    }
+
+    $key = md5($sign . $codepay_key);                       //开始加密
+    $query = $urls . '&sign=' . $key;                       //创建订单所需的参数
+    $apiHost = ($host ? $host : "http://api2.fateqq.com:52888/creat_order/?"); //网关
+    $url = $apiHost . $query;                               //生成的地址
+    return array("url" => $url, "query" => $query, "sign" => $sign, "param" => $urls);
+}
+// 掉线提醒
+public function codepay_online()
+{
+    $inc        = get_plugin_inc("nd_codepay");             //导入插件配置
+    if (X('get.key') != $inc['key']) {                      //验证是吧
+        exit(0);
+    }
+    $line       = (int)X('get.line');
+    $type       = (int)X('get.typeID');                       //1：支付宝 2：QQ钱包或财付通 3:微信支付
+    $type_pt        = '';
+    //当line为3 这里数据为需要扫码的二维码
+    //用支付宝打开该地址验证或生成二维码用支付宝扫码
+    //显示该二维码的方式：echo ('http://codepay.fateqq.com:52888/showqrcode.html?'.$_GET['data']);
+    $data       = X('get.data');
+    $email      = $inc['emali_jieshu'];                     //收信邮箱
+    switch($type){
+        case 1:
+            $type_pt = '支付宝';
+            break;
+        case 2:
+            $type_pt = 'QQ钱包';
+            break;
+        default:
+            $type_pt = '微信';
+            break;
+    }
+    //比如发送到139邮箱就实现了短信提醒. 微信 QQ提醒也都能实现
+    if ($line == 0) { //掉线
+        $title      = '码支付掉线提醒';
+        $content    = "检测到{$type_pt}掉线";
+        $this->Send_onlien($email, $title, $content);
+    } elseif ($line == 1) { //登录成功
+        $title      = '码支付登录提醒';
+        $content    = "检测到{$type_pt}登录成功";
+        $this->Send_onlien($email, $title, $content);
+    } elseif ($line == 3) {// 需要手机扫码 无法自动登录
+        //自行写发送邮件通知功能
+        $title      = '码支付{$type_pt}需要手机扫码登录';
+        $content    = "检测到{$type_pt}需要手机扫码登录<br><img src='http://codepay.fateqq.com:52888/showqrcode.html?{$data}'>";
+        $this->Send_onlien($email, $title, $content);
+    }
+}
+// 测试邮件
+public function test_codepayemail(){
+    if(!IS_LOGIN){
+        return $this->message('请登录后再试');
+    }
+    if($this->_group != 1){
+        return $this->message('你不是管理员');
+    }
+    if( IS_POST ){
+        $email = X("post.data");
+        $title = "测试发送邮件";
+        $content = "测试发送邮件 " .date('Y-m-d H:i:s',NOW_TIME);
+        $res = $this->Send_onlien($email, $title, $content);
+        return $this->message($res['msg'],$res['error']);
+    }
+}
+/**
+ * 使用 PHPMailer类库发送邮件，使用前请先配置stmp邮件服务。
+ * 
+ * $title,      邮件标题
+ * $content,    邮件内容
+ * $email       收信人
+ * */ 
+protected function Send_onlien($email, $title="邮件标题", $content="邮件发送内容"){
+    // 导入PHPMailer相关类
+    // 带入插件配置
+    $inc = get_plugin_inc("nd_codepay");
+    require PLUGIN_PATH.'nd_codepay/vendor/autoload.php';
+    //Create a new PHPMailer instance
+    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);                                    // Passing `true` enables exceptions
+    try {
+        //Server settings
+        $mail->SMTPDebug = 0;                                       // debug 0 关闭
+        $mail->isSMTP();                                            // Set mailer to use SMTP
+        $mail->Host = $inc['emali_smtp'];// 'smtp.qq.com';                                // SMTP 服务器地址
+        $mail->SMTPAuth = true;                                     // Enable SMTP authentication
+        $mail->Username = $inc['emali_user'];//'admin@daniuwo.com';                      // SMTP 用户名
+        $mail->Password = $inc['emali_pass'];//byeyowebajyjbcbg';                       // SMTP 密码
+        $mail->SMTPSecure = 'ssl';                                  // Enable TLS encryption, `ssl` also accepted
+        $mail->Port = $inc['emali_port'];                            // TCP port to connect to
+        $mail->CharSet = 'utf-8';                                   // 设置邮件编码
+        $mail->setLanguage('zh_cn');                                // 设置语言
+        //Recipients
+        $mail->setFrom($inc['emali_faxin_email'], $inc['emali_faxin_name']);   // 发信邮件地址和发信人名称
+        $mail->addAddress($email);                                  // 邮件接收地址
+        
+        //Content
+        $mail->isHTML(true);                                        // 邮件内容是否允许 html
+        $mail->Subject = $title;                                    // 邮件标题
+        $mail->Body    = $content;                                  // 邮件内容
+        $mail->send();
+        return [
+            'error'  => true,
+            'msg'   => '发送成功'
+        ];
+    } catch (Exception $e) {
+        return [
+            'error'  => false,// 失败
+            'msg'   => $mail->ErrorInfo
+        ];
+    }
+}
