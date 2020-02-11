@@ -1,5 +1,0 @@
- {php } {if $menu_action['index']||$menu_action['thread']||$menu_action['post']}
- <link rel="stylesheet" href="//at.alicdn.com/t/font_695745_v2nin5dhkfd8ia4i.css">
-<a href="{#HYBBS_URL('my',$data['user'],'style')}" class="hy-header-nav hy-header-right icon iconfont icon-fengge">
-</a>
-{/if}

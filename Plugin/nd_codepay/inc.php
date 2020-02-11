@@ -1,2 +1,0 @@
-<?php !defined('HY_PATH') && exit('HY_PATH not defined.'); ?>
-{"name":"nd_codepay","id":"172371","bili":"10","go_time":"3","min":"10","zidingyi":"1","jifenbili":"10","outTime":"360","gateway":"","pay_type":"1","key":"","transport":"http","apiurl":"http:\/\/www.azfpay.cn\/","kf":"","emali_smtp":"smtp.163.com","emali_port":"465","emali_user":"","emali_pass":"","emali_faxin_email":"","emali_faxin_name":"\u7801\u652f\u4ed8\u8f6f\u4ef6\u68c0\u6d4b","emali_test_email":"","emali_jieshu":"15057617747@139.com","gn":"op"}

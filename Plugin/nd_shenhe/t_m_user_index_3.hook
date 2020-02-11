@@ -1,4 +1,0 @@
-    <a href="{php HYBBS_URL('post','daishen');}">
-        <span class="icon icon-cog "></span>
-        <span class="title">帖子审核</span>
-    </a>

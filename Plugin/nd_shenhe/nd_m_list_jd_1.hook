@@ -1,8 +1,0 @@
-    {php $shenhe_inc = get_plugin_inc('nd_shenhe');}
-    {if $shenhe_inc['shenhe']}
-    {if $v['shenhe']}
-            <div style="position: relative;">
-                <i class="iconfont icon-daishenhe" style="position: absolute;font-size: 2.5rem;color: #ea4e23;right: 55px;top: -30px;z-index: 10"></i>
-            </div>
-    {/if}
-    {/if}

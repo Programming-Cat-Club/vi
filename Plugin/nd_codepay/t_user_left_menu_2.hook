@@ -1,7 +1,0 @@
-{if IS_LOGIN}
-	{if $data['uid'] == $user['uid']}
-	<li class="tab-profile {$menu_action.pay}">
-	<a href="{php HYBBS_URL('my',$data['user'],'pay');}"><i class="fa fa-money"></i>金币充值</a>
-	</li>
-	{/if}
-{/if}

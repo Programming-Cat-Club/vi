@@ -1,7 +1,0 @@
-{if IS_LOGIN}
-{if NOW_GID == C("ADMIN_GROUP")}
-    <li class="tab-message">
-    <a href="{#HYBBS_URL('post','daishen')}"><i class="fa fa-comments"></i>帖子审核</a>
-    </li>
-{/if}
-{/if}
