@@ -1,0 +1,19 @@
+<!-- followers count -->
+					<div class="g-phone-1-2">
+						<?php
+						echo sprintf(
+							___('My followers: %s'),
+							'<a href="' . theme_custom_author_profile::get_tabs('followers_count',$current_user_id)['url'] . '">' . theme_custom_author_profile::get_count('followers_count',$current_user_id) . '</a>'
+						);
+						?>
+					</div>
+					<!-- following count -->
+					<div class="g-tablet-1-2 g-desktop-1-3">
+						<?php
+						echo sprintf(
+							___('My following: %s'),
+							'<a href="' . theme_custom_author_profile::get_tabs('following_count',$current_user_id)['url'] . '">' .
+							theme_custom_author_profile::get_count('following_count',$current_user_id) . '</a>'
+						);
+						?>
+					</div>
